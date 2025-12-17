@@ -3,6 +3,8 @@ title: "IMDB Top Movies Analysis"
 output: html_document
 ---
 
+This project explores the IMDb Top 250 movies dataset to understand patterns in highly rated films. Movies are a central part of popular culture, and IMDb ratings reflect audience perceptions across time and genres. Using this dataset, we examine how ratings vary by decade, whether movie length is associated with higher ratings, and which genres dominate the list. The goal of this analysis is to identify trends among critically acclaimed films while critically evaluating how robust these patterns are. 
+
 ```{r}
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -13,6 +15,10 @@ knitr::opts_chunk$set(
 library(tidyverse)
 
 ```
+
+
+The data used in this project consists of the IMDb Top 250 movies, a publicly available dataset compiled from IMDb’s movie rankings. Each observation represents one highly rated film. Key variables include the movie title, release year, IMDb rating, duration, genre, and content rating. The dataset includes films spanning multiple decades, allowing for comparisons across time.
+
 
 ```{r}
 movies_raw <- read_csv("imdb_top_movies.csv")
@@ -68,3 +74,16 @@ movies_clean %>%
   ggplot(aes(duration_min, Rating)) +
   geom_point(alpha = 0.5)
 ```
+
+
+
+Before analysis, the data required several cleaning steps. Movie durations were originally stored as text and were converted into total minutes to allow for numerical analysis. A new decade variable was created from the release year to examine trends over time. Genres were also separated so that individual genre frequencies could be analyzed.
+
+
+To explore how IMDb ratings have changed over time, ratings were grouped by decade. This allows us to examine whether older films are rated differently than more recent ones. Movie length is often associated with perceived quality. The following visualization examines whether longer movies tend to receive higher IMDb ratings.
+
+
+To ensure the observed relationship between movie runtime and rating is not driven by older films, the analysis was repeated using only movies released after 1980. Comparing these results helps assess whether the trend is robust or influenced by historical factors.
+
+
+Overall, the analysis suggests that highly rated movies span many decades, with some variation in ratings across time. Longer movies appear to have a slightly higher average rating, though this relationship weakens when older films are excluded. Certain genres dominate the IMDb Top 250, highlighting audience preferences within critically acclaimed films. Future research could incorporate box office performance or audience demographics to further understand what contributes to high movie ratings.
