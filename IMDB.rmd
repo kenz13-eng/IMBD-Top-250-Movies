@@ -1,0 +1,70 @@
+---
+title: "IMDB Top Movies Analysis"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+
+library(tidyverse)
+
+```
+
+```{r}
+movies_raw <- read_csv("imdb_top_movies.csv")
+glimpse(movies_raw)
+```
+```{r}
+movies_clean <- movies_raw %>%
+  mutate(
+    duration_min =
+      str_extract(Duration, "\\d+h") %>%
+      str_remove("h") %>%
+      as.numeric() * 60 +
+      str_extract(Duration, "\\d+m") %>%
+      str_remove("m") %>%
+      as.numeric(),
+    decade = floor(Year / 10) * 10
+  )
+
+summary(movies_clean$duration_min)
+
+movies_genres <- movies_clean %>%
+  separate_rows(Genres, sep = ", ")
+theme_set(theme_minimal())
+
+ggplot(movies_clean, aes(decade, Rating)) +
+  geom_boxplot() +
+  labs(
+    title = "IMDb Ratings by Decade",
+    x = "Decade",
+    y = "IMDb Rating"
+  )
+
+ggplot(movies_clean, aes(duration_min, Rating)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title = "Movie Runtime vs IMDb Rating",
+    x = "Runtime (minutes)",
+    y = "IMDb Rating"
+  )
+
+movies_clean %>%
+  group_by(decade) %>%
+  summarize(
+    avg_rating = round(mean(Rating), 2),
+    avg_runtime = round(mean(duration_min)),
+    movies = n()
+  ) %>%
+  knitr::kable()
+
+movies_clean %>%
+  filter(Year >= 1980) %>%
+  ggplot(aes(duration_min, Rating)) +
+  geom_point(alpha = 0.5)
+```
